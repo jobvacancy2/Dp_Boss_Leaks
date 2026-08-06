@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BP BOOSTEN · Predictions</title>
+
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+      background: #0a0e17;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(10, 30, 60, 0.6) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(60, 10, 30, 0.4) 0%, transparent 60%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      background: linear-gradient(145deg, #111927, #0d1520);
+      border-radius: 32px;
+      padding: 30px 28px 40px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glow effect */
+    .container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(255, 215, 0, 0.03) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      flex-wrap: wrap;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #f7c948, #f59e0b);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      color: #0a0e17;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .company-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #f5e56b, #f7c948);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .company-sub {
+      font-size: 13px;
+      color: #8899bb;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      -webkit-text-fill-color: #8899bb;
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .stat-item {
+      text-align: right;
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: #667799;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .live-badge {
+      background: #ff1744;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      animation: pulse-live 1.8s infinite;
+      box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+    }
+
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Grid - 6 boxes */
+    .boxes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .box-wrapper {
+      background: linear-gradient(165deg, #141e2b, #0f1722);
+      border-radius: 20px;
+      padding: 20px 18px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .box-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #f7c948, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .box-wrapper:hover {
+      transform: translateY(-4px);
+      border-color: rgba(247, 201, 72, 0.2);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .box-wrapper:hover::before {
+      opacity: 1;
+    }
+
+    /* Box header with rank */
+    .box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #b0c4e8;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .box-rank {
+      font-size: 11px;
+      font-weight: 600;
+      color: #667799;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 2px 12px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Main prediction value */
+    .box-value {
+      font-size: 38px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      margin: 6px 0 4px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .box-value .highlight {
+      color: #f7c948;
+    }
+
+    .box-value .red {
+      color: #ff6b6b;
+    }
+
+    .box-value .green {
+      color: #51cf66;
+    }
+
+    /* Confidence / odds bar */
+    .confidence-bar {
+      margin: 12px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .confidence-track {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #51cf66, #f7c948, #ff6b6b);
+      transition: width 1s ease;
+    }
+
+    .confidence-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #8899bb;
+      min-width: 38px;
+      text-align: right;
+    }
+
+    /* Additional info row */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .info-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #667799;
+    }
+
+    .info-tag .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-green { background: #51cf66; }
+    .dot-yellow { background: #f7c948; }
+    .dot-red { background: #ff6b6b; }
+    .dot-blue { background: #4dabf7; }
+
+    .btn-action {
+      background: linear-gradient(135deg, #1a2a3f, #0f1a2a);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #b0c4e8;
+      font-weight: 600;
+      font-size: 12px;
+      padding: 6px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-action:hover {
+      background: linear-gradient(135deg, #f7c948, #f59e0b);
+      color: #0a0e17;
+      border-color: #f7c948;
+      box-shadow: 0 4px 20px rgba(247, 201, 72, 0.2);
+      transform: scale(1.02);
+    }
+
+    .btn-action.primary {
+      background: linear-gradient(135deg, #f7c948, #f59e0b);
+      color: #0a0e17;
+      border-color: #f7c948;
+    }
+
+    .btn-action.primary:hover {
+      box-shadow: 0 4px 30px rgba(247, 201, 72, 0.3);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: #445566;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-text span {
+      color: #667799;
+    }
+
+    .footer-badges {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-badge {
+      font-size: 11px;
+      color: #445566;
+      padding: 4px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 30px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .boxes {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 18px 14px 28px;
+        border-radius: 20px;
+      }
+
+      .company-name {
+        font-size: 20px;
+      }
+
+      .brand-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+
+      .boxes {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .box-value {
+        font-size: 30px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .header-stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .stat-number {
+        font-size: 17px;
+      }
+
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .box-value {
+        font-size: 26px;
+      }
+
+      .company-name {
+        font-size: 17px;
+      }
+
+      .container {
+        padding: 14px 10px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">BP</div>
+      <div>
+        <div class="company-name">BP BOOSTEN</div>
+        <div class="company-sub">7/7/2026 · Predictions</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-item">
+        <div class="stat-number">89%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1,247</div>
+        <div class="stat-label">Winners</div>
+      </div>
+      <span class="live-badge">● Live</span>
+    </div>
+  </div>
+
+  <!-- 6 Boxes -->
+  <div class="boxes">
+
+    <!-- Box 1 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">🔥 KALYAN</span>
+        <span class="box-rank">#1</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 92%;"></div>
+        </div>
+        <span class="confidence-label">92%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-green"></span> High</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">⭐ MAIN BAZAAR</span>
+        <span class="box-rank">#2</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 78%;"></div>
+        </div>
+        <span class="confidence-label">78%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-yellow"></span> Medium</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+    <!-- Box 3 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">🌙 RAJDHANI NIGHT</span>
+        <span class="box-rank">#3</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 85%;"></div>
+        </div>
+        <span class="confidence-label">85%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-green"></span> High</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+    <!-- Box 4 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">🎯 MILAN DAY</span>
+        <span class="box-rank">#4</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 71%;"></div>
+        </div>
+        <span class="confidence-label">71%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-yellow"></span> Medium</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+    <!-- Box 5 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">💎 SRIDEVI</span>
+        <span class="box-rank">#5</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 63%;"></div>
+        </div>
+        <span class="confidence-label">89%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-red"></span> High</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+    <!-- Box 6 -->
+    <div class="box-wrapper">
+      <div class="box-header">
+        <span class="box-title">🏆 TIME BAZAAR</span>
+        <span class="box-rank">#6</span>
+      </div>
+      <div class="box-value"><span class="highlight">890</span> · <span class="green">75</span> · <span class="red">348</span></div>
+      <div class="confidence-bar">
+        <div class="confidence-track">
+          <div class="confidence-fill" style="width: 88%;"></div>
+        </div>
+        <span class="confidence-label">88%</span>
+      </div>
+      <div class="info-row">
+        <span class="info-tag"><span class="dot dot-blue"></span> Rising</span>
+        <button class="btn-action primary">View</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">
+      ⚡ <span>Live predictions · Updated every 2 minutes</span>
+    </div>
+    <div class="footer-badges">
+      <span class="footer-badge">🔒 Secure</span>
+      <span class="footer-badge">📊 94% accuracy</span>
+      <span class="footer-badge">🏅 Verified</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
